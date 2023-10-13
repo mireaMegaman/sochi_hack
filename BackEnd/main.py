@@ -17,12 +17,9 @@ from PIL import Image
 
 
 yolo = None
-classifier = None
+ocr = None
 
 app = FastAPI(title="Recognition of railway car numbers")
-
-class CheckText(BaseModel):
-    text: str
 
 class Image64(BaseModel):
     files: List[str]
@@ -45,16 +42,11 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup_event():
-    global yolo, classifier
+    global yolo, ocr
     yolo = YOLO(os.path.join('ml', 'yolo8nano_best_model.pt'))
-    # yolo.export(format='onnx') 'engine'
-    classifier = Classifier()
-    classifier.get_model_from_file(os.path.join('ml', 'classifier_efficient_net_95-8acc.pt'))
+    ocr = Classifier()
+    ocr.get_model_from_file(os.path.join('ml', 'classifier_efficient_net_95-8acc.pt'))
 
-
-@app.post('/text')
-def send_text(value: CheckText):
-    return {'data': value}
 
 def to_zip(path: str):
     zip_io = io.BytesIO()
@@ -78,7 +70,7 @@ def remove_file(path: str) -> None:
 @app.post('/get_result_64')
 def main_64(file: Image64, background: BackgroundTasks):
     session_id = uuid4()
-    path_crops = os.path.join('swans')
+    path_crops = os.path.join('swans', str(session_id))
     images = file.files
     json_ans = {"data": []}
     for i, file in enumerate(images):
