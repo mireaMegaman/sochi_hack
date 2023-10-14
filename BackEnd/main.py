@@ -43,9 +43,10 @@ app.add_middleware(
 @app.on_event("startup")
 def startup_event():
     global yolo, ocr
-    yolo = YOLO(os.path.join('ml', 'yolo8nano_best_model.pt'))
-    ocr = Classifier()
-    ocr.get_model_from_file(os.path.join('ml', 'classifier_efficient_net_95-8acc.pt'))
+    # yolo = YOLO(os.path.join('ml', 'yolo8nano_best_model.pt'))
+    yolo = YOLO(os.path.join('ml', 'pytorch_model.bin'))
+    # ocr = Classifier()
+    # ocr.get_model_from_file(os.path.join('ml', 'classifier_efficient_net_95-8acc.pt'))
 
 
 def to_zip(path: str):
@@ -77,10 +78,11 @@ def main_64(file: Image64, background: BackgroundTasks):
         image_as_bytes = str.encode(file)  # convert string to bytes
         img_recovered = base64.b64decode(image_as_bytes)  # decode base64string
         image = Image.open(io.BytesIO(img_recovered))
-        results = yolo.predict(image)
-        for el in results:
-            el.save_crop(path_crops)
-        predict = 'something'
+        # results = yolo.predict(image)
+        # for el in results:
+        #     print(el.boxes)
+        #     el.save_crop(path_crops)
+        predict = yolo.predict(image)
         json_ans['data'].append({"file_name" : f"file_{i+1}", "pred_class" : predict})
     with open(os.path.join(path_crops, 'data.txt'), 'w') as outfile:
         json.dump(json_ans, outfile)
