@@ -6,16 +6,21 @@ from transformers import (
     VisionEncoderDecoderModel
 )
 
-from ultralytics import YOLO
 from pathlib import Path
 from PIL import Image
 
 import warnings
-
 warnings.filterwarnings('ignore')
 
 
 def generate_proba(scores, tokens, processor):
+    """
+    Calculates the confidence of the model in predicting a particular token
+    :param scores: logits
+    :param tokens: predictions
+    :param processor: model's processor
+    :return: dict, particular token and it's probability
+    """
     tok2prob = {}
     for token, proba in zip(tokens[0][1:-1], scores[:-1]):
         tok2prob[processor.tokenizer.decode([token])] = round(torch.max(F.softmax(proba[0])).item(), 3)
