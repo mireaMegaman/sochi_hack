@@ -1,17 +1,16 @@
-from typing import List
 import io
-from time import sleep
 import os
 import sys
-sys.path.append('BackEnd\\ml')
-
-sys.path.append('BackEnd\\ml\\sochi_ml')
-from main import generate_proba
-from cv2_converter import crop, draw_boxes
-# from ml.sochi_ml.cv2_converter import crop, draw_boxes
-# from ml.sochi_ml.main import generate_proba
-from cv2 import imwrite
 import base64
+sys.path.append('BackEnd\\ml')
+sys.path.append('BackEnd\\ml\\sochi_ml')
+from ocr_module import generate_proba, is_proper
+from cv2_converter import crop, draw_boxes
+
+from time import sleep
+from typing import List
+from cv2 import imwrite
+
 from zipfile import ZipFile, ZIP_DEFLATED
 import json
 from pydantic import BaseModel
@@ -46,9 +45,6 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    # allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
-    # allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
-    #                "Authorization"],
     allow_methods=["*",],
     allow_headers=["*",],
 )
@@ -58,8 +54,6 @@ app.add_middleware(
 def startup_event():
     global yolo, processor, ocr_model
     yolo = YOLO(os.path.join('BackEnd', 'ml', 'best.pt'))
-    # processor = TrOCRProcessor.from_pretrained('microsoft/trocr-base-printed')
-    # ocr_model = VisionEncoderDecoderModel.from_pretrained('microsoft/trocr-base-stage1')
     processor = TrOCRProcessor.from_pretrained('BackEnd\\ml\\processor')
     ocr_model = VisionEncoderDecoderModel.from_pretrained('BackEnd\\ml\\tr_ocr_m')
 
@@ -70,7 +64,6 @@ def to_zip(path: str):
         for root, _, files in os.walk(path):
             for fileName in files:
                 temp_zip.write(os.path.join(root, fileName), fileName) # первый параметр отвечает за то, какой файл выбрать, а второй, как он будет называться
-                # temp_zip.write(os.path.join(root, fileName), os.path.join('response', fileName))
     return StreamingResponse(
         iter([zip_io.getvalue()]), 
         media_type="application/x-zip-compressed", 
@@ -93,9 +86,10 @@ def recognize(base_path: str):
         return_dict_in_generate=True
     )
     ids, scores = generated_ids['sequences'], generated_ids['scores']
-    generated_text = processor.batch_decode(ids, skip_special_tokens=True)[0] # лейбл
-    probabilities = generate_proba(scores, ids, processor) # вероятности
-    return generated_text, probabilities
+    generated_text = processor.batch_decode(ids, skip_special_tokens=True)[0]  # лейбл
+    _, probabilities = generate_proba(scores, ids, processor)  # вероятности 
+    is_correct = is_proper(generated_text)
+    return probabilities, generated_text, is_correct
 
 
 @app.post('/get_result_64')
@@ -112,11 +106,11 @@ def main_64(file: Image64, background: BackgroundTasks):
         _ = image.save(base_file_path)
         results = yolo.predict(image)
         cropped_image = crop(base_file_path, results)
-        imwrite(os.path.join('photos', f"cropped_image-{names[i]}.jpg"), cropped_image)
+        imwrite(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"), cropped_image)
         bbox_image = draw_boxes(base_file_path, results)
-        imwrite(os.path.join('photos', f"boxed_image-{names[i]}.jpg"), bbox_image)
-        text, probabilities = recognize(os.path.join('photos', f"cropped_image-{names[i]}.jpg"))
-        json_ans['data'].append({'name' : names[i], 'text': text, 'probabilities': probabilities})
+        imwrite(os.path.join(path_files, f"boxed_image-{names[i]}.jpg"), bbox_image)
+        number, probability, is_correct = recognize(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"))
+        json_ans['data'].append({'name' : names[i], 'number': number, 'confidence': '' if probability > 0.5 else 'Требует внимания оператора', 'is_correct' : is_correct})
     with open(os.path.join(path_files, 'data.txt'), 'w') as outfile:
         json.dump(json_ans, outfile)
     background.add_task(remove_file, path_files)

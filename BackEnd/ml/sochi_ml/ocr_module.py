@@ -1,14 +1,6 @@
 import torch
 import torch.nn.functional as F
 
-from transformers import (
-    TrOCRProcessor,
-    VisionEncoderDecoderModel
-)
-
-from pathlib import Path
-from PIL import Image
-
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -46,24 +38,3 @@ def is_proper(number: str) -> bool:
     evens = [int(even) for even in evens]
 
     return (sum(odds) + sum(evens) + last_number) % 10 == 0
-
-
-def recognize(path: str):
-    base_path = Path(path)
-
-    processor = TrOCRProcessor.from_pretrained('./processor')
-    ocr_model = VisionEncoderDecoderModel.from_pretrained('./tr_ocr_m')
-
-    image = Image.open(base_path).convert("RGB")
-    pixel_values = processor(images=image, return_tensors="pt").pixel_values
-    generated_ids = ocr_model.generate(
-        pixel_values,
-        output_scores=True,
-        return_dict_in_generate=True
-    )
-    ids, scores = generated_ids['sequences'], generated_ids['scores']
-    generated_text = processor.batch_decode(ids, skip_special_tokens=True)[0]  # лейбл
-    probabilities = generate_proba(scores, ids, processor)  # вероятности
-
-    is_correct = is_proper(generated_text)
-    return probabilities, generated_text, is_correct
