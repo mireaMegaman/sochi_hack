@@ -3,6 +3,7 @@ import io
 from time import sleep
 from uuid import uuid4
 import os
+from cv2 import imwrite
 import base64
 from zipfile import ZipFile, ZIP_DEFLATED
 from shutil import rmtree
@@ -14,9 +15,8 @@ from fastapi.responses import StreamingResponse
 from ml.sochi_ml.main import generate_proba
 from ultralytics import YOLO
 from PIL import Image
-import torch
 import torch.nn.functional as F
-
+from ml.sochi_ml.cv2_converter import crop, draw_boxes
 from transformers import (
     TrOCRProcessor,
     VisionEncoderDecoderModel
@@ -71,10 +71,11 @@ def to_zip(path: str):
 
 def remove_file(path: str) -> None:
     sleep(10)
-    rmtree(path)
+    for f in os.listdir(path):
+        os.remove(os.path.join(path, f))
 
 
-def predict(base_path: str):
+def recognize(base_path: str):
     image = Image.open(base_path).convert("RGB")
     pixel_values = processor(images=image, return_tensors="pt").pixel_values
     generated_ids = ocr_model.generate(
@@ -90,20 +91,23 @@ def predict(base_path: str):
 
 @app.post('/get_result_64')
 def main_64(file: Image64, background: BackgroundTasks):
-    session_id = uuid4()
-    path_crops = os.path.join('sign', str(session_id))
+    path_files = os.path.join('photos')
     images = file.files
     json_ans = {"data": []}
     for i, file in enumerate(images):
         image_as_bytes = str.encode(file)  # convert string to bytes
         img_recovered = base64.b64decode(image_as_bytes)  # decode base64string
         image = Image.open(io.BytesIO(img_recovered))
-        crops = yolo.predict(image)
-        for el in crops:
-            el.save_crop(path_crops)
-        text, probabilities = predict(os.path.join(path_crops, 'sign', 'im.jpg'))
+        base_file_path = os.path.join(path_files, f'file-{i+1}.jpg')
+        _ = image.save(base_file_path)
+        results = yolo.predict(image)
+        cropped_image = crop(base_file_path, results)
+        imwrite(os.path.join('photos', f"cropped_image-{i+1}.jpg"), cropped_image)
+        bbox_image = draw_boxes(base_file_path, results)
+        imwrite(os.path.join('photos', f"boxed_image-{i+1}.jpg"), bbox_image)
+        text, probabilities = recognize(os.path.join('photos', f"cropped_image-{i+1}.jpg"))
         json_ans['data'].append({'text': text, 'probabilities': probabilities})
-    with open(os.path.join(path_crops, 'data.txt'), 'w') as outfile:
+    with open(os.path.join(path_files, 'data.txt'), 'w') as outfile:
         json.dump(json_ans, outfile)
-    background.add_task(remove_file, path_crops)
-    return to_zip(path_crops)
+    background.add_task(remove_file, path_files)
+    return to_zip(path_files)

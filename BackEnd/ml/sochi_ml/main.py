@@ -7,8 +7,6 @@ from transformers import (
 )
 
 from ultralytics import YOLO
-from cv2_converter import *
-
 from pathlib import Path
 from PIL import Image
 
@@ -44,16 +42,13 @@ def recognize(path: str):
     return probabilities, generated_text
 
 
-if __name__ == '__main__':
-    detect_model = YOLO('./yolo_models/best.pt')
-    results = detect_model.predict(source='./test_ph/24252710.jpg')
+# if __name__ == '__main__':
+    # detect_model = YOLO('./yolo_models/best.pt')
+    # results = detect_model.predict(source='./test_ph/24252710.jpg')
 
-    cropped_image = crop('./test_ph/24252710.jpg', results)
-    print(recognize("./cropped_image.jpg"))
-
-
+    # cropped_image = crop('./test_ph/24252710.jpg', results)
+    # print(recognize("./cropped_image.jpg"))
     # bbox_image = draw_boxes('./test_ph/24252710.jpg', results)
 
     # cv2.imwrite('./cropped_image.jpg', cropped_image)
     # cv2.imwrite('./bbox_image.jpg', bbox_image)
-
