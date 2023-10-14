@@ -106,12 +106,15 @@ def main_64(file: Image64, background: BackgroundTasks):
         _ = image.save(base_file_path)
         results = yolo.predict(image)
         cropped_image = crop(base_file_path, results)
-        imwrite(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"), cropped_image)
-        imwrite(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"), cropped_image)
-        bbox_image = draw_boxes(base_file_path, results)
-        imwrite(os.path.join(path_files, f"boxed_image-{names[i]}.jpg"), bbox_image)
-        number, probability, is_correct = recognize(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"))
-        json_ans['data'].append({'name' : names[i], 'number': number, 'confidence': '' if probability > 0.5 else 'Требует внимания оператора', 'is_correct' : is_correct})
+        if not cropped_image:
+            json_ans['data'].append({'name' : names[i], 'number': "Не удалось распознать номер"})
+        else:
+            imwrite(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"), cropped_image)
+            imwrite(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"), cropped_image)
+            bbox_image = draw_boxes(base_file_path, results)
+            imwrite(os.path.join(path_files, f"boxed_image-{names[i]}.jpg"), bbox_image)
+            number, probability, is_correct = recognize(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"))
+            json_ans['data'].append({'name' : names[i], 'number': number, 'confidence': '' if probability > 0.5 else 'Требует внимания оператора', 'is_correct' : is_correct})
     with open(os.path.join(path_files, 'data.txt'), 'w') as outfile:
         json.dump(json_ans, outfile)
     background.add_task(remove_file, path_files)
