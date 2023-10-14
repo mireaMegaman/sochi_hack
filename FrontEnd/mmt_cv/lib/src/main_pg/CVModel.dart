@@ -96,8 +96,11 @@ class  _CVModelState extends State<CVModel>{
         File dataFile = File(path);
         String dataString = dataFile.readAsStringSync();
         final responceMap = jsonDecode(dataString);
+        // print(responceMap);
         List<dynamic> dataMap = jsonDecode(jsonEncode(responceMap["data"]));
-        List<List> dataList = dataMap.map((element) => [element['file_name'], element['pred_class']]).toList();
+        // print(dataMap);
+        List<List> dataList = dataMap.map((element) => [element['text'], element['probabilities']]).toList();
+        // print(dataList);
         setState(() {
           flag = true;
           newDataList = dataList; 
@@ -329,7 +332,7 @@ class  _CVModelState extends State<CVModel>{
                               Padding(
                                 padding: EdgeInsets.fromLTRB(0, 0, 18, 0),
                                 child: Text(
-                                  "Имя файла",
+                                  "Предсказанный номер вагона",
                                   textAlign: TextAlign.start,
                                   overflow: TextOverflow.clip,
                                   style: TextStyle(
@@ -341,9 +344,9 @@ class  _CVModelState extends State<CVModel>{
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                 child: Text(
-                                  "Предсказанный класс",
+                                  "Уверенность модели в предсказании",
                                   textAlign: TextAlign.start,
                                   overflow: TextOverflow.clip,
                                   style: TextStyle(
