@@ -19,13 +19,16 @@ def generate_proba(scores, tokens, processor):
     :param scores: logits
     :param tokens: predictions
     :param processor: model's processor
-    :return: dict, particular token and it's probability
+    :return: dict, particular token and it's probability; float, average proba for all tokens
     """
     tok2prob = {}
+    average_proba = .0
     for token, proba in zip(tokens[0][1:-1], scores[:-1]):
-        tok2prob[processor.tokenizer.decode([token])] = round(torch.max(F.softmax(proba[0])).item(), 3)
+        tok_proba = torch.max(F.softmax(proba[0])).item()
+        average_proba += tok_proba
+        tok2prob[processor.tokenizer.decode([token])] = round(tok_proba, 3)
 
-    return tok2prob
+    return tok2prob, round(average_proba / len(scores[:-1]), 4) * 100
 
 
 def is_proper(number: str) -> bool:
