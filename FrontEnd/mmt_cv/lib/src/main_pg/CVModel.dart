@@ -367,24 +367,24 @@ class  _CVModelState extends State<CVModel>{
                                             ),
                                     )
                               ),
-                              // DataColumn(label: Text('Уверенность модели',
-                              //               style: TextStyle(
-                              //                 fontWeight: FontWeight.w600,
-                              //                 fontStyle: FontStyle.normal,
-                              //                 fontSize: 17,
-                              //                 color: Color(0xFFF3F2F3),
-                              //               ),
-                              //       )
-                              // ),
-                              // DataColumn(label: Text('Контрольная сумма',
-                              //               style: TextStyle(
-                              //                 fontWeight: FontWeight.w600,
-                              //                 fontStyle: FontStyle.normal,
-                              //                 fontSize: 17,
-                              //                 color: Color(0xFFF3F2F3),
-                              //               ),
-                              //       )
-                              // ),
+                              DataColumn(label: Text('Уверенность модели',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 17,
+                                              color: Color(0xFFF3F2F3),
+                                            ),
+                                    )
+                              ),
+                              DataColumn(label: Text('Контрольная сумма',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 17,
+                                              color: Color(0xFFF3F2F3),
+                                            ),
+                                    )
+                              ),
                             ],
                             rows: newDataList.map((item) {
                               return DataRow(cells: [
@@ -396,7 +396,7 @@ class  _CVModelState extends State<CVModel>{
                                               color: Color(0xFFF3F2F3),
                                             ),)
                                 ),
-                                DataCell(Text(item['text'].toString(), 
+                                DataCell(Text(item['number'].toString(), 
                                     style: const TextStyle(
                                               fontWeight: FontWeight.w400,
                                               fontStyle: FontStyle.normal,
@@ -404,22 +404,22 @@ class  _CVModelState extends State<CVModel>{
                                               color: Color(0xFFF3F2F3),
                                             ),)
                                 ),
-                                // DataCell(Text(item['confidence'], 
-                                //     style: const TextStyle(
-                                //               fontWeight: FontWeight.w400,
-                                //               fontStyle: FontStyle.normal,
-                                //               fontSize: 17,
-                                //               color: Color(0xFFF3F2F3),
-                                //             ),)
-                                // ),
-                                // DataCell(Text(item['is_correct'].toString(), 
-                                //     style: const TextStyle(
-                                //               fontWeight: FontWeight.w400,
-                                //               fontStyle: FontStyle.normal,
-                                //               fontSize: 17,
-                                //               color: Color(0xFFF3F2F3),
-                                //             ),)
-                                // ),
+                                DataCell(Text(item['confidence'], 
+                                    style: const TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 17,
+                                              color: Color(0xFFF3F2F3),
+                                            ),)
+                                ),
+                                DataCell(Text(item['is_correct'].toString(), 
+                                    style: const TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 17,
+                                              color: Color(0xFFF3F2F3),
+                                            ),)
+                                ),
                               ]);
                             }).toList(),
                           )
