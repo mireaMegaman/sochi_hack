@@ -94,7 +94,7 @@ def recognize(base_path: str):
 
 @app.post('/get_result_64')
 def main_64(file: Image64, background: BackgroundTasks):
-    path_files = os.path.join('photos')
+    path_files = os.path.join('BackEnd', 'photos')
     images = file.files
     names = file.files_names
     json_ans = {"data": []}
@@ -106,6 +106,7 @@ def main_64(file: Image64, background: BackgroundTasks):
         _ = image.save(base_file_path)
         results = yolo.predict(image)
         cropped_image = crop(base_file_path, results)
+        imwrite(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"), cropped_image)
         imwrite(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"), cropped_image)
         bbox_image = draw_boxes(base_file_path, results)
         imwrite(os.path.join(path_files, f"boxed_image-{names[i]}.jpg"), bbox_image)

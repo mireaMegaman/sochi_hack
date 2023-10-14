@@ -40,5 +40,5 @@ def draw_boxes(path_to_image: str, yolo_predict) -> numpy.ndarray:
     y_min = int(y_min * height)
     x_max = int(x_max * width)
     y_max = int(y_max * height)
-    cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 5)  # np.array
+    cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 5) # array here
     return image
