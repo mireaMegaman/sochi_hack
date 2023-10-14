@@ -100,7 +100,7 @@ def recognize(base_path: str):
 
 @app.post('/get_result_64')
 def main_64(file: Image64, background: BackgroundTasks):
-    path_files = os.path.join('photos')
+    path_files = os.path.join('BackEnd', 'photos')
     images = file.files
     names = file.files_names
     json_ans = {"data": []}
@@ -112,10 +112,10 @@ def main_64(file: Image64, background: BackgroundTasks):
         _ = image.save(base_file_path)
         results = yolo.predict(image)
         cropped_image = crop(base_file_path, results)
-        imwrite(os.path.join('photos', f"cropped_image-{names[i]}.jpg"), cropped_image)
+        imwrite(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"), cropped_image)
         bbox_image = draw_boxes(base_file_path, results)
-        imwrite(os.path.join('photos', f"boxed_image-{names[i]}.jpg"), bbox_image)
-        text, probabilities = recognize(os.path.join('photos', f"cropped_image-{names[i]}.jpg"))
+        imwrite(os.path.join(path_files, f"boxed_image-{names[i]}.jpg"), bbox_image)
+        text, probabilities = recognize(os.path.join(path_files, f"cropped_image-{names[i]}.jpg"))
         json_ans['data'].append({'name' : names[i], 'text': text, 'probabilities': probabilities})
     with open(os.path.join(path_files, 'data.txt'), 'w') as outfile:
         json.dump(json_ans, outfile)

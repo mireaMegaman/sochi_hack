@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:mmt_cv_sochi/src/main_pg/Left_Menu.dart';
 import 'package:mmt_cv_sochi/src/main_pg/MEGAMEN.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:archive/archive.dart';
 // import 'package:path_provider/path_provider.dart';
 
@@ -33,8 +34,17 @@ class  _CVModelState extends State<CVModel>{
 
   late var newDataList = [];
 
-  List<String> images = [
-    "./assets/images/small_round.png"
+  List<String> frstImgs = [
+    "./assets/images/small_round.png",
+
+  ];
+  List<String> bboxImgs = [
+
+    "./assets/images/small_round.png",
+  ];
+  List<String> cropImgs = [
+
+    "./assets/images/small_round.png",
   ];
 
   bool flag = false;
@@ -48,14 +58,22 @@ class  _CVModelState extends State<CVModel>{
     for (final file in archive) {
       final filename = file.name;
       if (file.isFile) {
-        print("test file");
+        // print("test file");
         print(filename);
         final data = file.content as List<int>;
         if (filename.contains('.jpg') || filename.contains('.jpeg') || filename.contains('.png')) {
           File('./responce/$filename')
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
-          images.add('./responce/$filename');
+          if (filename.contains('cropped_image')) {
+            cropImgs.add('./responce/$filename');
+          }
+          else if (filename.contains('boxed_image')) {
+            bboxImgs.add('./responce/$filename');
+          }
+          else {
+            frstImgs.add('./responce/$filename');
+          }
         }
         else {
           File('responce/$filename')
@@ -69,7 +87,7 @@ class  _CVModelState extends State<CVModel>{
     }
   }
   
-  // ---------------------------------------------------------------------------------------------- //
+// ---------------------------------------------------------------------------------------------- //
   //загрузка изображений 
   Future<void> uploadImage() async {
     // Stopwatch stopwatch = Stopwatch()..start();
@@ -135,8 +153,14 @@ class  _CVModelState extends State<CVModel>{
       setState(() {
         flag = true;
         newDataList = dataMap; 
-        if (images.contains("./assets/images/small_round.png")) {
-          images.remove("./assets/images/small_round.png");
+        if (frstImgs.contains("./assets/images/small_round.png")) {
+          frstImgs.remove("./assets/images/small_round.png");
+        }
+        if (bboxImgs.contains("./assets/images/small_round.png")) {
+          bboxImgs.remove("./assets/images/small_round.png");
+        }
+        if (cropImgs.contains("./assets/images/small_round.png")) {
+          cropImgs.remove("./assets/images/small_round.png");
         }
       });
       // print('doSomething() executed in ${stopwatch.elapsed}');
@@ -192,23 +216,32 @@ class  _CVModelState extends State<CVModel>{
                 size: 24,
               ),
               onPressed: () {
-                images = [
+                frstImgs = [
                   "./assets/images/small_round.png"
                 ];
                 setState(() {
                   flag = true;
                   newDataList = [];
+                  frstImgs = [
+                      "./assets/images/small_round.png",
+                    ];
+                    bboxImgs = [
+                      "./assets/images/small_round.png",
+                    ];
+                    cropImgs = [
+                      "./assets/images/small_round.png",
+                    ];
                   deleteFilesInFolder("./responce");
+                  Restart.restartApp();
                 });
               },
             ),
           ),
         ],
-       
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 300, maxWidth: 920),
+          constraints: const BoxConstraints(minWidth: 300, maxWidth: 1400),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: SingleChildScrollView(
@@ -299,6 +332,7 @@ class  _CVModelState extends State<CVModel>{
                       ],
                     ),
                   ),
+// ---------------------------------------------------------------------------------------------- //
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(
@@ -333,16 +367,24 @@ class  _CVModelState extends State<CVModel>{
                                             ),
                                     )
                               ),
-                              DataColumn(label: Text('Токены',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontStyle: FontStyle.normal,
-                                              fontSize: 17,
-                                              color: Color(0xFFF3F2F3),
-                                            ),
-                                    )
-                              ),
-                              // DataColumn(label: Text('Hobbies')),
+                              // DataColumn(label: Text('Уверенность модели',
+                              //               style: TextStyle(
+                              //                 fontWeight: FontWeight.w600,
+                              //                 fontStyle: FontStyle.normal,
+                              //                 fontSize: 17,
+                              //                 color: Color(0xFFF3F2F3),
+                              //               ),
+                              //       )
+                              // ),
+                              // DataColumn(label: Text('Контрольная сумма',
+                              //               style: TextStyle(
+                              //                 fontWeight: FontWeight.w600,
+                              //                 fontStyle: FontStyle.normal,
+                              //                 fontSize: 17,
+                              //                 color: Color(0xFFF3F2F3),
+                              //               ),
+                              //       )
+                              // ),
                             ],
                             rows: newDataList.map((item) {
                               return DataRow(cells: [
@@ -362,20 +404,29 @@ class  _CVModelState extends State<CVModel>{
                                               color: Color(0xFFF3F2F3),
                                             ),)
                                 ),
-                                DataCell(Text(jsonEncode(item['probabilities']).toString().replaceAll('{', '').replaceAll('}', '').replaceAll(':', ' : ').split(',').join("\n"), 
-                                    style: const TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontStyle: FontStyle.normal,
-                                              fontSize: 17,
-                                              color: Color(0xFFF3F2F3),
-                                            ),)
-                                ),
+                                // DataCell(Text(item['confidence'], 
+                                //     style: const TextStyle(
+                                //               fontWeight: FontWeight.w400,
+                                //               fontStyle: FontStyle.normal,
+                                //               fontSize: 17,
+                                //               color: Color(0xFFF3F2F3),
+                                //             ),)
+                                // ),
+                                // DataCell(Text(item['is_correct'].toString(), 
+                                //     style: const TextStyle(
+                                //               fontWeight: FontWeight.w400,
+                                //               fontStyle: FontStyle.normal,
+                                //               fontSize: 17,
+                                //               color: Color(0xFFF3F2F3),
+                                //             ),)
+                                // ),
                               ]);
                             }).toList(),
                           )
                       ],
                     ),
                   ),
+// ---------------------------------------------------------------------------------------------- //
                   const Padding(
                     padding: EdgeInsets.fromLTRB(8, 20, 30, 10),
                     child: Text(
@@ -390,127 +441,202 @@ class  _CVModelState extends State<CVModel>{
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 270,
-                    width: MediaQuery.of(context).size.width,
-                    child: Stack(
-                      children: [
-                        PageView.builder(
-                          controller: _pageController ,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: images.length,
-                          itemBuilder: (context, index) {
-                            return Align(
-                              alignment: Alignment.topCenter,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 16, horizontal: 0),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(5.0),
-                                  child:
-                                      Image.file(File(images[index]),
-                                                height: 200,
-                                                width: MediaQuery.of(context).size.width,
-                                                fit: BoxFit.contain,
+// ---------------------------------------------------------------------------------------------- //
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          height: 270,
+                          width: 350,
+                          child: Stack(
+                            children: [
+                              PageView.builder(
+                                controller: _pageController ,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: frstImgs.length,
+                                itemBuilder: (context, index) {
+                                  return Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16, horizontal: 0),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                        child:
+                                            Image.file(File(frstImgs[index]),
+                                                      height: 200,
+                                                      width: MediaQuery.of(context).size.width,
+                                                      fit: BoxFit.contain,
+                                            ),
                                       ),
-                                ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
-                            child: SmoothPageIndicator(
-                              controller: _pageController ,
-                              count: images.length,
-                              axisDirection: Axis.horizontal,
-                              effect: const ExpandingDotsEffect(
-                                dotColor: Color(0xFFBC6626),
-                                activeDotColor: Color(0xFFEDB828),
-                                dotHeight: 10,
-                                dotWidth: 10,
-                                radius: 16,
-                                spacing: 7,
-                                expansionFactor: 5,
-                              ),
-                            ),
+                              // Align(
+                              //   alignment: Alignment.bottomCenter,
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                              //     child: SmoothPageIndicator(
+                              //       controller: _pageController ,
+                              //       count: frstImgs.length,
+                              //       axisDirection: Axis.horizontal,
+                              //       effect: const ExpandingDotsEffect(
+                              //         dotColor: Color(0xFFBC6626),
+                              //         activeDotColor: Color(0xFFEDB828),
+                              //         dotHeight: 10,
+                              //         dotWidth: 10,
+                              //         radius: 16,
+                              //         spacing: 7,
+                              //         expansionFactor: 5,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          height: 270,
+                          width: 350,
+                          child: Stack(
+                            children: [
+                              PageView.builder(
+                                controller: _pageController ,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: bboxImgs.length,
+                                itemBuilder: (context, index) {
+                                  return Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16, horizontal: 0),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                        child:
+                                            Image.file(File(bboxImgs[index]),
+                                                      height: 200,
+                                                      width: MediaQuery.of(context).size.width,
+                                                      fit: BoxFit.contain,
+                                            ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              // Align(
+                              //   alignment: Alignment.bottomCenter,
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                              //     child: SmoothPageIndicator(
+                              //       controller: _pageController ,
+                              //       count: bboxImgs.length,
+                              //       axisDirection: Axis.horizontal,
+                              //       effect: const ExpandingDotsEffect(
+                              //         dotColor: Color(0xFFBC6626),
+                              //         activeDotColor: Color(0xFFEDB828),
+                              //         dotHeight: 10,
+                              //         dotWidth: 10,
+                              //         radius: 16,
+                              //         spacing: 7,
+                              //         expansionFactor: 5,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          height: 270,
+                          width: 350,
+                          child: Stack(
+                            children: [
+                              PageView.builder(
+                                controller: _pageController ,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: cropImgs.length,
+                                itemBuilder: (context, index) {
+                                  return Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16, horizontal: 0),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                        child:
+                                            Image.file(File(cropImgs[index]),
+                                                      height: 200,
+                                                      width: MediaQuery.of(context).size.width,
+                                                      fit: BoxFit.contain,
+                                            ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              // Align(
+                              //   alignment: Alignment.bottomCenter,
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                              //     child: SmoothPageIndicator(
+                              //       controller: _pageController ,
+                              //       count: cropImgs.length,
+                              //       axisDirection: Axis.horizontal,
+                              //       effect: const ExpandingDotsEffect(
+                              //         dotColor: Color(0xFFBC6626),
+                              //         activeDotColor: Color(0xFFEDB828),
+                              //         dotHeight: 10,
+                              //         dotWidth: 10,
+                              //         radius: 16,
+                              //         spacing: 7,
+                              //         expansionFactor: 5,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  // const Padding(
-                  //   padding: EdgeInsets.fromLTRB(10, 20, 0, 10),
-                  //   child: Text(
-                  //     "Загруженные изображения",
-                  //     textAlign: TextAlign.start,
-                  //     overflow: TextOverflow.clip,
-                  //     style: TextStyle(
-                  //       fontWeight: FontWeight.w600,
-                  //       fontStyle: FontStyle.normal,
-                  //       fontSize: 18,
-                  //       color: Color(0xFFF3F2F3),
-                  //     ),
-                  //   ),
-                  // ),
-                  // GridView(
-                  //   padding: const EdgeInsets.all(8),
-                  //   shrinkWrap: true,
-                  //   scrollDirection: Axis.vertical,
-                  //   physics: const ScrollPhysics(),
-                  //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  //     crossAxisCount: 2,
-                  //     crossAxisSpacing: 10,
-                  //     mainAxisSpacing: 10,
-                  //     childAspectRatio: 0.9,
-                  //   ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   crossAxisAlignment: CrossAxisAlignment.center,
                   //   children: [
-                  //     Container(
-                  //       margin: const EdgeInsets.all(0),
-                  //       padding: const EdgeInsets.all(0),
-                  //       width: 200,
-                  //       height: 100,
-                  //       decoration: BoxDecoration(
-                  //         color: const Color(0xFF232323),
-                  //         shape: BoxShape.rectangle,
-                  //         borderRadius: BorderRadius.circular(10.0),
-                  //       ),
-                  //       child: const Padding(
-                  //         padding: EdgeInsets.all(5),
-                  //         child:
-                  //             Image(
-                  //           image: AssetImage("assets/images/Untitled-1.png"),
-                  //           height: 100,
-                  //           width: 140,
-                  //           fit: BoxFit.contain,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     Container(
-                  //       margin: const EdgeInsets.all(0),
-                  //       padding: const EdgeInsets.all(0),
-                  //       width: 200,
-                  //       height: 100,
-                  //       decoration: BoxDecoration(
-                  //         color: const Color(0xFF232323),
-                  //         shape: BoxShape.rectangle,
-                  //         borderRadius: BorderRadius.circular(10.0),
-                  //       ),
-                  //       child: const Padding(
-                  //         padding: EdgeInsets.all(5),
-                  //         child:
-                  //             Image(
-                  //           image: AssetImage("assets/images/Untitled-1.png"),
-                  //           height: 100,
-                  //           width: 140,
-                  //           fit: BoxFit.contain,
+                  //     Align(
+                  //       alignment: Alignment.bottomCenter,
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
+                  //         child: SmoothPageIndicator(
+                  //           controller: _pageController ,
+                  //           count: cropImgs.length,
+                  //           axisDirection: Axis.horizontal,
+                  //           effect: const ExpandingDotsEffect(
+                  //             dotColor: Color(0xFFBC6626),
+                  //             activeDotColor: Color(0xFFEDB828),
+                  //             dotHeight: 10,
+                  //             dotWidth: 10,
+                  //             radius: 16,
+                  //             spacing: 7,
+                  //             expansionFactor: 5,
+                  //           ),
                   //         ),
                   //       ),
                   //     ),
                   //   ],
                   // ),
+// ---------------------------------------------------------------------------------------------- //
                   const Padding(
                     padding: EdgeInsets.fromLTRB(0, 90, 0, 0),
                     child: Divider(
@@ -571,7 +697,6 @@ class  _CVModelState extends State<CVModel>{
   }
   
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     throw UnimplementedError();
   }
 }
