@@ -1,22 +1,28 @@
 from typing import List
 import io
 from time import sleep
-from uuid import uuid4
 import os
+import sys
+sys.path.append('BackEnd\\ml')
+
+sys.path.append('BackEnd\\ml\\sochi_ml')
+from main import generate_proba
+from cv2_converter import crop, draw_boxes
+# from ml.sochi_ml.cv2_converter import crop, draw_boxes
+# from ml.sochi_ml.main import generate_proba
 from cv2 import imwrite
 import base64
 from zipfile import ZipFile, ZIP_DEFLATED
-from shutil import rmtree
 import json
 from pydantic import BaseModel
 from fastapi import BackgroundTasks, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from ml.sochi_ml.main import generate_proba
+
 from ultralytics import YOLO
 from PIL import Image
 import torch.nn.functional as F
-from ml.sochi_ml.cv2_converter import crop, draw_boxes
+
 from transformers import (
     TrOCRProcessor,
     VisionEncoderDecoderModel
@@ -30,6 +36,7 @@ app = FastAPI(title="Recognition of railway car numbers")
 
 class Image64(BaseModel):
     files: List[str]
+    files_names: List[str]
 
 origins = [
     "*",
@@ -50,9 +57,11 @@ app.add_middleware(
 @app.on_event("startup")
 def startup_event():
     global yolo, processor, ocr_model
-    yolo = YOLO(os.path.join('ml', 'best.pt'))
-    processor = TrOCRProcessor.from_pretrained('microsoft/trocr-base-printed')
-    ocr_model = VisionEncoderDecoderModel.from_pretrained('microsoft/trocr-base-stage1')
+    yolo = YOLO(os.path.join('BackEnd', 'ml', 'best.pt'))
+    # processor = TrOCRProcessor.from_pretrained('microsoft/trocr-base-printed')
+    # ocr_model = VisionEncoderDecoderModel.from_pretrained('microsoft/trocr-base-stage1')
+    processor = TrOCRProcessor.from_pretrained('BackEnd\\ml\\processor')
+    ocr_model = VisionEncoderDecoderModel.from_pretrained('BackEnd\\ml\\tr_ocr_m')
 
 
 def to_zip(path: str):
@@ -93,6 +102,7 @@ def recognize(base_path: str):
 def main_64(file: Image64, background: BackgroundTasks):
     path_files = os.path.join('photos')
     images = file.files
+    names = file.files_names
     json_ans = {"data": []}
     for i, file in enumerate(images):
         image_as_bytes = str.encode(file)  # convert string to bytes
@@ -106,7 +116,7 @@ def main_64(file: Image64, background: BackgroundTasks):
         bbox_image = draw_boxes(base_file_path, results)
         imwrite(os.path.join('photos', f"boxed_image-{i+1}.jpg"), bbox_image)
         text, probabilities = recognize(os.path.join('photos', f"cropped_image-{i+1}.jpg"))
-        json_ans['data'].append({'text': text, 'probabilities': probabilities})
+        json_ans['data'].append({'name' : names[i], 'text': text, 'probabilities': probabilities})
     with open(os.path.join(path_files, 'data.txt'), 'w') as outfile:
         json.dump(json_ans, outfile)
     background.add_task(remove_file, path_files)
