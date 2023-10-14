@@ -21,7 +21,6 @@ class Data {
 
 }
 
-
 class CVModel extends StatefulWidget {
   CVModel({super.key});
   
@@ -31,11 +30,17 @@ class CVModel extends StatefulWidget {
 
 class  _CVModelState extends State<CVModel>{
   final _pageController = PageController();
+
   late var newDataList = [];
+
   List<String> images = [
     "./assets/images/small_round.png"
   ];
+
   bool flag = false;
+
+  List<Widget> nameSlots = [];
+
   // ---------------------------------------------------------------------------------------------- //
   // unzip ответа от сервера 
   Future<void> unzipFileFromResponse(List<int> responseBody) async {
@@ -63,90 +68,95 @@ class  _CVModelState extends State<CVModel>{
       }
     }
   }
+  
   // ---------------------------------------------------------------------------------------------- //
   //загрузка изображений 
   Future<void> uploadImage() async {
-    Stopwatch stopwatch = Stopwatch()..start();
+    // Stopwatch stopwatch = Stopwatch()..start();
     final picker = ImagePicker();
+
     List<XFile>? imageFileList = [];
+    List<String>? Path_files = [];
+
     final List<XFile> selectedImages = await picker.pickMultiImage();
+
     if (selectedImages.isNotEmpty) {
         imageFileList.addAll(selectedImages);
     }
+    
+    for (var i = 0; i < imageFileList.length; i++) {
+      // print(imageFileList[i].path.split("\\").last);
+      Path_files.add(imageFileList[i].path.split("\\").last);
+    }
+    // print(Path_files);
     List<String>? base64list = [];
     for (var i = 0; i < imageFileList.length; i++) {
       final imageBytes1 = await imageFileList[i].readAsBytes();
       final base64Image1 = base64.encode(imageBytes1);
       base64list.add(base64Image1);
     }
-    final json = {'files': base64list};
-    print('doSomething() executed in ${stopwatch.elapsed}');
+
+    final json = {'files_names': Path_files,
+                'files': base64list};
+
+    // print('doSomething() executed in ${stopwatch.elapsed}');
     final response = await http.post(
         // Uri.parse('http://95.163.250.213/get_result_64'), // 5.188.143.201 185.130.112.217 95.163.250.196
         Uri.parse('http://127.0.0.1:8000/get_result_64'),
         headers: {HttpHeaders.contentTypeHeader: 'application/json'},
         body: jsonEncode(json),
-      );
-      print(jsonEncode(json));
-      print('doSomething() executed in ${stopwatch.elapsed}');
-      if (response.statusCode == 200) {
-        print('Image(s) uploaded successfully!');
-        unzipFileFromResponse(response.bodyBytes);
-        const path = "./responce/data.txt";
-        File dataFile = File(path);
-        String dataString = dataFile.readAsStringSync();
-        final responceMap = jsonDecode(dataString);
-        // print(responceMap);
-        List<dynamic> dataMap = jsonDecode(jsonEncode(responceMap["data"]));
-        // print(dataMap);
-        List<List> dataList = dataMap.map((element) => [element['text'], element['probabilities']]).toList();
-        // print(dataList);
-        setState(() {
-          flag = true;
-          newDataList = dataList; 
-          if (images.contains("./assets/images/small_round.png")) {
-            images.remove("./assets/images/small_round.png");
-          }
-        });
-        print('doSomething() executed in ${stopwatch.elapsed}');
-      } else {
-        print('Failed to upload image.');
-      }
+    );
+
+    // print(jsonEncode(json));
+
+    // print('doSomething() executed in ${stopwatch.elapsed}');
+
+    if (response.statusCode == 200) {
+      // print('Image(s) uploaded successfully!');
+
+      unzipFileFromResponse(response.bodyBytes);
+
+      const path = "./responce/data.txt";
+
+      File dataFile = File(path);
+
+      String dataString = dataFile.readAsStringSync();
+
+      final responceMap = jsonDecode(dataString);
+
+      // print(responceMap);
+      
+      List<dynamic> dataMap = jsonDecode(jsonEncode(responceMap["data"]));
+
+      print(dataMap);
+      // List<List> dataList = dataMap.map((element) => [element['text'], element['probabilities']]).toList();
+      // print(dataList);
+
+      setState(() {
+        flag = true;
+        newDataList = dataMap; 
+        if (images.contains("./assets/images/small_round.png")) {
+          images.remove("./assets/images/small_round.png");
+        }
+      });
+      // print('doSomething() executed in ${stopwatch.elapsed}');
+    } else {
+      // print('Failed to upload image.');
+    }
   }
   // ---------------------------------------------------------------------------------------------- //
   // функция очистки папки
   Future<void> deleteFilesInFolder(String folderPath) async {
-  final directory = Directory(folderPath);
-  if (await directory.exists()) {
-    await for (final entity in directory.list()) {
-      if (entity is File) {
-        await entity.delete();
+    final directory = Directory(folderPath);
+    if (await directory.exists()) {
+      await for (final entity in directory.list()) {
+        if (entity is File) {
+          await entity.delete();
+        }
       }
     }
   }
-}
-  // ---------------------------------------------------------------------------------------------- //
-  // // функция вывода изображения на android
-  // Future<void> outputFile(String fileName) async {
-  //   // Get the directory where the file is located
-  //   Directory directory = await getApplicationDocumentsDirectory();
 
-  //   // Get the path of the file
-  //   String filePath = '${directory.path}/$fileName';
-
-  //   // Check if the file exists
-  //   if (await File(filePath).exists()) {
-  //     // Read the contents of the file
-  //     String contents = await File(filePath).readAsString();
-
-  //     // Output the contents of the file
-  //     print(contents);
-  //   } else {
-  //     // File does not exist
-  //     print('File does not exist');
-  //   }
-  // }
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -189,15 +199,7 @@ class  _CVModelState extends State<CVModel>{
                   flag = true;
                   newDataList = [];
                   deleteFilesInFolder("./responce");
-                  // newDataList = dataList; 
-                  // if (images.contains("./assets/images/small_round.png")) {
-                  //   images.remove("./assets/images/small_round.png");
-                  // }
                 });
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => const ProfileScreen()),
-                // );
               },
             ),
           ),
@@ -211,8 +213,8 @@ class  _CVModelState extends State<CVModel>{
             padding: const EdgeInsets.all(20),
             child: SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
@@ -238,7 +240,7 @@ class  _CVModelState extends State<CVModel>{
                         color: const Color(0xFFEDB828),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
                         padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                         textColor: const Color(0xFF181818),
@@ -298,137 +300,79 @@ class  _CVModelState extends State<CVModel>{
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Text(
-                              "Таблица предсказаний:",
-                              textAlign: TextAlign.start,
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 17,
-                                color: Color(0xFFF3F2F3),
-                              ),
+                        DataTable(
+                          dataRowMinHeight: 70,
+                          dataRowMaxHeight: 100,
+                          border: TableBorder.all(
+                            width: 2.0,
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: const Color(0xFFEDB828),
                             ),
-                          ],
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.all(5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(0, 0, 18, 0),
-                                child: Text(
-                                  "Предсказанный номер вагона",
-                                  textAlign: TextAlign.start,
-                                  overflow: TextOverflow.clip,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 14,
-                                    color: Color(0xFFF3F2F3),
-                                  ),
-                                ),
+                            columns: const [
+                              DataColumn(label: Text('Название файла',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 17,
+                                              color: Color(0xFFF3F2F3),
+                                            ),
+                                    )
                               ),
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                child: Text(
-                                  "Уверенность модели в предсказании",
-                                  textAlign: TextAlign.start,
-                                  overflow: TextOverflow.clip,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontStyle: FontStyle.normal,
-                                    fontSize: 14,
-                                    color: Color(0xFFF3F2F3),
-                                  ),
-                                ),
+                              DataColumn(label: Text('Номер вагона',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 17,
+                                              color: Color(0xFFF3F2F3),
+                                            ),
+                                    )
                               ),
+                              DataColumn(label: Text('Токены',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 17,
+                                              color: Color(0xFFF3F2F3),
+                                            ),
+                                    )
+                              ),
+                              // DataColumn(label: Text('Hobbies')),
                             ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(3),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                      SizedBox(
-                                        height: 70,
-                                        width: 120,
-                                        child: ListView.builder(
-                                          itemCount: newDataList.length,
-                                          itemBuilder: (BuildContext context, int index) {
-                                            final item = newDataList[index];
-                                          return item != null ? ListTile(
-                                            title: Text('${(index+1)}. ${item[0]}',
-                                            style: const TextStyle(
+                            rows: newDataList.map((item) {
+                              return DataRow(cells: [
+                                DataCell(Text(item['name'], 
+                                    style: const TextStyle(
                                               fontWeight: FontWeight.w400,
                                               fontStyle: FontStyle.normal,
-                                              fontSize: 14,
+                                              fontSize: 17,
                                               color: Color(0xFFF3F2F3),
-                                            ),),
-                                            // subtitle: Text('Code: ${item[1]}'),
-                                            ) : Container();
-                                          },  
-                                        ),
-                                      ),
-                                    ],
+                                            ),)
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(3),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                      SizedBox(
-                                        height: 70,
-                                        width: 120,
-                                        child: ListView.builder(
-                                          itemCount: newDataList.length,
-                                          itemBuilder: (BuildContext context, int index) {
-                                            final item = newDataList[index];
-                                          return item != null ? ListTile(
-                                            title: Text('${(index+1)}. ${item[1]}', 
-                                            style: const TextStyle(
+                                DataCell(Text(item['text'].toString(), 
+                                    style: const TextStyle(
                                               fontWeight: FontWeight.w400,
                                               fontStyle: FontStyle.normal,
-                                              fontSize: 14,
+                                              fontSize: 17,
                                               color: Color(0xFFF3F2F3),
-                                            ),),
-                                            ) : Container();
-                                          },  
-                                        ),
-                                      ),
-                                    ],
+                                            ),)
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
+                                DataCell(Text(jsonEncode(item['probabilities']).toString().replaceAll('{', '').replaceAll('}', '').replaceAll(':', ' : ').split(',').join("\n"), 
+                                    style: const TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 17,
+                                              color: Color(0xFFF3F2F3),
+                                            ),)
+                                ),
+                              ]);
+                            }).toList(),
+                          )
                       ],
                     ),
                   ),
@@ -436,7 +380,7 @@ class  _CVModelState extends State<CVModel>{
                     padding: EdgeInsets.fromLTRB(8, 20, 30, 10),
                     child: Text(
                       "Недавние изображения, распознанные моделью",
-                      textAlign: TextAlign.start,
+                      textAlign: TextAlign.center,
                       overflow: TextOverflow.clip,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
@@ -464,21 +408,6 @@ class  _CVModelState extends State<CVModel>{
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(5.0),
                                   child:
-                                  // child: LayoutBuilder(builder: (context, constraints) {
-                                  //     if (Platform.isWindows) {
-                                  //       return Image.file(File(images[index]),
-                                  //               height: 200,
-                                  //               width: MediaQuery.of(context).size.width,
-                                  //               fit: BoxFit.contain,
-                                  //       );
-                                  //     }
-                                  //     else if (Platform.isAndroid) {
-                                  //       return const Text("Platform is Android"); 
-                                  //     }
-                                  //     else {
-                                  //       return const Text("Platform is smth"); 
-                                  //     }
-                                  // }),
                                       Image.file(File(images[index]),
                                                 height: 200,
                                                 width: MediaQuery.of(context).size.width,

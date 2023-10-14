@@ -30,6 +30,7 @@ app = FastAPI(title="Recognition of railway car numbers")
 
 class Image64(BaseModel):
     files: List[str]
+    files_names: List[str]
 
 origins = [
     "*",
@@ -93,20 +94,21 @@ def recognize(base_path: str):
 def main_64(file: Image64, background: BackgroundTasks):
     path_files = os.path.join('photos')
     images = file.files
+    names = file.files_names
     json_ans = {"data": []}
     for i, file in enumerate(images):
         image_as_bytes = str.encode(file)  # convert string to bytes
         img_recovered = base64.b64decode(image_as_bytes)  # decode base64string
         image = Image.open(io.BytesIO(img_recovered))
-        base_file_path = os.path.join(path_files, f'file-{i+1}.jpg')
+        base_file_path = os.path.join(path_files, names[i])
         _ = image.save(base_file_path)
         results = yolo.predict(image)
         cropped_image = crop(base_file_path, results)
-        imwrite(os.path.join('photos', f"cropped_image-{i+1}.jpg"), cropped_image)
+        imwrite(os.path.join('photos', f"cropped_image-{names[i]}.jpg"), cropped_image)
         bbox_image = draw_boxes(base_file_path, results)
-        imwrite(os.path.join('photos', f"boxed_image-{i+1}.jpg"), bbox_image)
-        text, probabilities = recognize(os.path.join('photos', f"cropped_image-{i+1}.jpg"))
-        json_ans['data'].append({'text': text, 'probabilities': probabilities})
+        imwrite(os.path.join('photos', f"boxed_image-{names[i]}.jpg"), bbox_image)
+        text, probabilities = recognize(os.path.join('photos', f"cropped_image-{names[i]}.jpg"))
+        json_ans['data'].append({'name' : names[i], 'text': text, 'probabilities': probabilities})
     with open(os.path.join(path_files, 'data.txt'), 'w') as outfile:
         json.dump(json_ans, outfile)
     background.add_task(remove_file, path_files)
