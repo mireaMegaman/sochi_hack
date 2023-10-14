@@ -7,6 +7,7 @@ import 'package:mmt_cv_sochi/src/main_pg/Left_Menu.dart';
 import 'package:mmt_cv_sochi/src/main_pg/MEGAMEN.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:archive/archive.dart';
+// import 'package:path_provider/path_provider.dart';
 
 // Парсинг json
 class Data {
@@ -28,7 +29,6 @@ class CVModel extends StatefulWidget {
   State<CVModel> createState() => _CVModelState();
 }
 
-
 class  _CVModelState extends State<CVModel>{
   final _pageController = PageController();
   late var newDataList = [];
@@ -36,7 +36,7 @@ class  _CVModelState extends State<CVModel>{
     "./assets/images/small_round.png"
   ];
   bool flag = false;
-  
+  // ---------------------------------------------------------------------------------------------- //
   // unzip ответа от сервера 
   Future<void> unzipFileFromResponse(List<int> responseBody) async {
     final archive = ZipDecoder().decodeBytes(responseBody);
@@ -63,6 +63,7 @@ class  _CVModelState extends State<CVModel>{
       }
     }
   }
+  // ---------------------------------------------------------------------------------------------- //
   //загрузка изображений 
   Future<void> uploadImage() async {
     Stopwatch stopwatch = Stopwatch()..start();
@@ -86,7 +87,7 @@ class  _CVModelState extends State<CVModel>{
         headers: {HttpHeaders.contentTypeHeader: 'application/json'},
         body: jsonEncode(json),
       );
-      // print(jsonEncode(json));
+      print(jsonEncode(json));
       print('doSomething() executed in ${stopwatch.elapsed}');
       if (response.statusCode == 200) {
         print('Image(s) uploaded successfully!');
@@ -99,7 +100,7 @@ class  _CVModelState extends State<CVModel>{
         List<List> dataList = dataMap.map((element) => [element['file_name'], element['pred_class']]).toList();
         setState(() {
           flag = true;
-          newDataList = dataList;          
+          newDataList = dataList; 
           if (images.contains("./assets/images/small_round.png")) {
             images.remove("./assets/images/small_round.png");
           }
@@ -109,6 +110,39 @@ class  _CVModelState extends State<CVModel>{
         print('Failed to upload image.');
       }
   }
+  // ---------------------------------------------------------------------------------------------- //
+  // функция очистки папки
+  Future<void> deleteFilesInFolder(String folderPath) async {
+  final directory = Directory(folderPath);
+  if (await directory.exists()) {
+    await for (final entity in directory.list()) {
+      if (entity is File) {
+        await entity.delete();
+      }
+    }
+  }
+}
+  // ---------------------------------------------------------------------------------------------- //
+  // // функция вывода изображения на android
+  // Future<void> outputFile(String fileName) async {
+  //   // Get the directory where the file is located
+  //   Directory directory = await getApplicationDocumentsDirectory();
+
+  //   // Get the path of the file
+  //   String filePath = '${directory.path}/$fileName';
+
+  //   // Check if the file exists
+  //   if (await File(filePath).exists()) {
+  //     // Read the contents of the file
+  //     String contents = await File(filePath).readAsString();
+
+  //     // Output the contents of the file
+  //     print(contents);
+  //   } else {
+  //     // File does not exist
+  //     print('File does not exist');
+  //   }
+  // }
   
   @override
   Widget build(BuildContext context) {
@@ -135,24 +169,37 @@ class  _CVModelState extends State<CVModel>{
             );
           },
         ),
-        // actions: [
-        //   Padding(
-        //     padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
-        //     child:  IconButton(
-        //       icon: const Icon(
-        //         Icons.person,
-        //         color: Color(0xffd9fae9),
-        //         size: 24,
-        //       ),
-        //       onPressed: () {
-        //         // Navigator.push(
-        //         //   context,
-        //         //   MaterialPageRoute(builder: (context) => const ProfileScreen()),
-        //         // );
-        //       },
-        //     ),
-        //   ),
-        // ],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
+            child:  IconButton(
+              icon: const Icon(
+                Icons.autorenew_outlined,
+                color: Color(0xFFEDB828),
+                size: 24,
+              ),
+              onPressed: () {
+                images = [
+                  "./assets/images/small_round.png"
+                ];
+                setState(() {
+                  flag = true;
+                  newDataList = [];
+                  deleteFilesInFolder("./responce");
+                  // newDataList = dataList; 
+                  // if (images.contains("./assets/images/small_round.png")) {
+                  //   images.remove("./assets/images/small_round.png");
+                  // }
+                });
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                // );
+              },
+            ),
+          ),
+        ],
+       
       ),
       body: Center(
         child: ConstrainedBox(
@@ -217,40 +264,11 @@ class  _CVModelState extends State<CVModel>{
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            // Padding(
-                            //   padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                            //   child: MaterialButton(
-                            //     onPressed: () {
-                            //       // Navigator.push(
-                            //       //   context,
-                            //       //   MaterialPageRoute(builder: (context) => const Uploaded_files()),
-                            //       // );
-                            //     },
-                            //     color: const Color(0xFFEDB828),
-                            //     elevation: 0,
-                            //     shape: RoundedRectangleBorder(
-                            //       borderRadius: BorderRadius.circular(7.0),
-                            //     ),
-                            //     padding: const EdgeInsets.all(10),
-                            //     textColor: const Color(0xFF181818),
-                            //     height: 45,
-                            //     minWidth: 130,
-                            //     child: const Text(
-                            //       "БД устройства",
-                            //       style: TextStyle(
-                            //         fontSize: 16,
-                            //         fontWeight: FontWeight.w600,
-                            //         fontStyle: FontStyle.normal,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                               child: MaterialButton(
                                 onPressed: () {
                                   uploadImage();
-                                  // print(images);
                                 },
                                 color: const Color(0xFFEDB828),
                                 elevation: 0,
@@ -276,7 +294,6 @@ class  _CVModelState extends State<CVModel>{
                       ],
                     ),
                   ),
-                  
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: Column(
@@ -355,14 +372,20 @@ class  _CVModelState extends State<CVModel>{
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                       SizedBox(
-                                        height: 120,
+                                        height: 70,
                                         width: 120,
                                         child: ListView.builder(
                                           itemCount: newDataList.length,
                                           itemBuilder: (BuildContext context, int index) {
                                             final item = newDataList[index];
                                           return item != null ? ListTile(
-                                            title: Text('${(index+1)}. ${item[0]}'),
+                                            title: Text('${(index+1)}. ${item[0]}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 14,
+                                              color: Color(0xFFF3F2F3),
+                                            ),),
                                             // subtitle: Text('Code: ${item[1]}'),
                                             ) : Container();
                                           },  
@@ -379,14 +402,20 @@ class  _CVModelState extends State<CVModel>{
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                       SizedBox(
-                                        height: 120,
+                                        height: 70,
                                         width: 120,
                                         child: ListView.builder(
                                           itemCount: newDataList.length,
                                           itemBuilder: (BuildContext context, int index) {
                                             final item = newDataList[index];
                                           return item != null ? ListTile(
-                                            title: Text('${(index+1)}. ${item[1]}'),
+                                            title: Text('${(index+1)}. ${item[1]}', 
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontStyle: FontStyle.normal,
+                                              fontSize: 14,
+                                              color: Color(0xFFF3F2F3),
+                                            ),),
                                             ) : Container();
                                           },  
                                         ),
@@ -432,19 +461,27 @@ class  _CVModelState extends State<CVModel>{
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(5.0),
                                   child:
+                                  // child: LayoutBuilder(builder: (context, constraints) {
+                                  //     if (Platform.isWindows) {
+                                  //       return Image.file(File(images[index]),
+                                  //               height: 200,
+                                  //               width: MediaQuery.of(context).size.width,
+                                  //               fit: BoxFit.contain,
+                                  //       );
+                                  //     }
+                                  //     else if (Platform.isAndroid) {
+                                  //       return const Text("Platform is Android"); 
+                                  //     }
+                                  //     else {
+                                  //       return const Text("Platform is smth"); 
+                                  //     }
+                                  // }),
                                       Image.file(File(images[index]),
-                                        height: 200,
-                                        width: MediaQuery.of(context).size.width,
-                                        fit: BoxFit.contain,
-                                      )),
-                                    
-                                  // child: Image.asset(
-                                  //   "assets/images/Untitled-1.png",
-                                  //   height: 200,
-                                  //   width: MediaQuery.of(context).size.width,
-                                  //   fit: BoxFit.contain,
-                                  // ),
-                                // ),
+                                                height: 200,
+                                                width: MediaQuery.of(context).size.width,
+                                                fit: BoxFit.contain,
+                                      ),
+                                ),
                               ),
                             );
                           },
@@ -472,82 +509,85 @@ class  _CVModelState extends State<CVModel>{
                       ],
                     ),
                   ),
+                  // const Padding(
+                  //   padding: EdgeInsets.fromLTRB(10, 20, 0, 10),
+                  //   child: Text(
+                  //     "Загруженные изображения",
+                  //     textAlign: TextAlign.start,
+                  //     overflow: TextOverflow.clip,
+                  //     style: TextStyle(
+                  //       fontWeight: FontWeight.w600,
+                  //       fontStyle: FontStyle.normal,
+                  //       fontSize: 18,
+                  //       color: Color(0xFFF3F2F3),
+                  //     ),
+                  //   ),
+                  // ),
+                  // GridView(
+                  //   padding: const EdgeInsets.all(8),
+                  //   shrinkWrap: true,
+                  //   scrollDirection: Axis.vertical,
+                  //   physics: const ScrollPhysics(),
+                  //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  //     crossAxisCount: 2,
+                  //     crossAxisSpacing: 10,
+                  //     mainAxisSpacing: 10,
+                  //     childAspectRatio: 0.9,
+                  //   ),
+                  //   children: [
+                  //     Container(
+                  //       margin: const EdgeInsets.all(0),
+                  //       padding: const EdgeInsets.all(0),
+                  //       width: 200,
+                  //       height: 100,
+                  //       decoration: BoxDecoration(
+                  //         color: const Color(0xFF232323),
+                  //         shape: BoxShape.rectangle,
+                  //         borderRadius: BorderRadius.circular(10.0),
+                  //       ),
+                  //       child: const Padding(
+                  //         padding: EdgeInsets.all(5),
+                  //         child:
+                  //             Image(
+                  //           image: AssetImage("assets/images/Untitled-1.png"),
+                  //           height: 100,
+                  //           width: 140,
+                  //           fit: BoxFit.contain,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     Container(
+                  //       margin: const EdgeInsets.all(0),
+                  //       padding: const EdgeInsets.all(0),
+                  //       width: 200,
+                  //       height: 100,
+                  //       decoration: BoxDecoration(
+                  //         color: const Color(0xFF232323),
+                  //         shape: BoxShape.rectangle,
+                  //         borderRadius: BorderRadius.circular(10.0),
+                  //       ),
+                  //       child: const Padding(
+                  //         padding: EdgeInsets.all(5),
+                  //         child:
+                  //             Image(
+                  //           image: AssetImage("assets/images/Untitled-1.png"),
+                  //           height: 100,
+                  //           width: 140,
+                  //           fit: BoxFit.contain,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   const Padding(
-                    padding: EdgeInsets.fromLTRB(10, 20, 0, 10),
-                    child: Text(
-                      "Загруженные изображения",
-                      textAlign: TextAlign.start,
-                      overflow: TextOverflow.clip,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 18,
-                        color: Color(0xFFF3F2F3),
-                      ),
+                    padding: EdgeInsets.fromLTRB(0, 90, 0, 0),
+                    child: Divider(
+                      color: Color(0xFFEDB828),
+                      height: 16,
+                      thickness: 3,
+                      indent: 0,
+                      endIndent: 0,
                     ),
-                  ),
-                  GridView(
-                    padding: const EdgeInsets.all(8),
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    physics: const ScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 0.9,
-                    ),
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.all(0),
-                        padding: const EdgeInsets.all(0),
-                        width: 200,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF232323),
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(5),
-                          child:
-                              Image(
-                            image: AssetImage("assets/images/Untitled-1.png"),
-                            height: 100,
-                            width: 140,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(0),
-                        padding: const EdgeInsets.all(0),
-                        width: 200,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF232323),
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(5),
-                          child:
-                              Image(
-                            image: AssetImage("assets/images/Untitled-1.png"),
-                            height: 100,
-                            width: 140,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Divider(
-                    color: Color(0xFFEDB828),
-                    height: 16,
-                    thickness: 3,
-                    indent: 0,
-                    endIndent: 0,
                   ),
                   Container(
                     margin: const EdgeInsets.all(0),
