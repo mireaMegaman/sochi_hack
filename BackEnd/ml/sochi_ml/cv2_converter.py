@@ -5,7 +5,7 @@ import numpy
 def crop(path_to_image: str, yolo_predict) -> numpy.ndarray:
     """
     Get the original image and return cropped image (bbox from yolo v8)
-    :param path_to_image:
+    :param path_to_image: str
     :param yolo_predict: yolo v8 results
     :return: array for cropped image
     """
