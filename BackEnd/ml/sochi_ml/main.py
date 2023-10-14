@@ -6,8 +6,14 @@ from transformers import (
     VisionEncoderDecoderModel
 )
 
+from ultralytics import YOLO
+from cv2_converter import *
+
 from pathlib import Path
 from PIL import Image
+
+import warnings
+warnings.filterwarnings('ignore')
 
 
 def generate_proba(scores, tokens, processor):
@@ -18,8 +24,8 @@ def generate_proba(scores, tokens, processor):
     return tok2prob
 
 
-if __name__ == '__main__':
-    base_path = Path("./image")  # вот тут меняй как хочешь
+def recognize(path: str):
+    base_path = Path(path)  # вот тут меняй как хочешь
 
     processor = TrOCRProcessor.from_pretrained('./tr_ocr_m')
     ocr_model = VisionEncoderDecoderModel.from_pretrained('./processor')
@@ -34,3 +40,20 @@ if __name__ == '__main__':
     ids, scores = generated_ids['sequences'], generated_ids['scores']
     generated_text = processor.batch_decode(ids, skip_special_tokens=True)[0] # лейбл
     probabilities = generate_proba(scores, ids, processor) # вероятности
+
+    return probabilities, generated_text
+
+
+if __name__ == '__main__':
+    detect_model = YOLO('./yolo_models/best.pt')
+    results = detect_model.predict(source='./test_ph/24252710.jpg')
+
+    cropped_image = crop('./test_ph/24252710.jpg', results)
+    print(recognize("./cropped_image.jpg"))
+
+
+    # bbox_image = draw_boxes('./test_ph/24252710.jpg', results)
+
+    # cv2.imwrite('./cropped_image.jpg', cropped_image)
+    # cv2.imwrite('./bbox_image.jpg', bbox_image)
+
