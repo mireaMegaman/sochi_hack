@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\runner\flutter_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\runner\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\runner\utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\runner\win32_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\flutter\generated_plugin_registrant.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\runner\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\runner\Runner.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{ADD6591F-5492-3A54-8F46-EE19259EFF22}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

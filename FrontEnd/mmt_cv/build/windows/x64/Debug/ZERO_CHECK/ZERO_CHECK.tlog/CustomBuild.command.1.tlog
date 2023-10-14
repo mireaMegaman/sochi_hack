@@ -1,0 +1,10 @@
+^D:\WORK\HACK_SOCHI\MMT_CV\MMT_FIN2\SOCHI_HACK\FRONTEND\MMT_CV\BUILD\WINDOWS\CMAKEFILES\1022181D0E4B68F2EBFE448FF20FC92E\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/Work/hack_sochi/MMT_CV/mmt_fin2/sochi_hack/FrontEnd/mmt_cv/windows -BD:/Work/hack_sochi/MMT_CV/mmt_fin2/sochi_hack/FrontEnd/mmt_cv/build/windows --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/Work/hack_sochi/MMT_CV/mmt_fin2/sochi_hack/FrontEnd/mmt_cv/build/windows/mmt_cv.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

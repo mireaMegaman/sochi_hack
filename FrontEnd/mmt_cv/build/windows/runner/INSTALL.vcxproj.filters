@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\build\windows\CMakeFiles\4eb7c7ffc552062a0db5124a7e415538\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{F2DB2839-3717-3F16-B339-1512C4E4D8DD}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

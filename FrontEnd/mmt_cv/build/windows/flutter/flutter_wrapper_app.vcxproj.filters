@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\flutter\ephemeral\cpp_client_wrapper\core_implementations.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\flutter\ephemeral\cpp_client_wrapper\standard_codec.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\flutter\ephemeral\cpp_client_wrapper\flutter_engine.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\flutter\ephemeral\cpp_client_wrapper\flutter_view_controller.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\flutter\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{F2DB2839-3717-3F16-B339-1512C4E4D8DD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{ADD6591F-5492-3A54-8F46-EE19259EFF22}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

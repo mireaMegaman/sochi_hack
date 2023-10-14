@@ -1,0 +1,28 @@
+^D:\WORK\HACK_SOCHI\MMT_CV\MMT_FIN2\SOCHI_HACK\FRONTEND\MMT_CV\BUILD\WINDOWS\CMAKEFILES\6F70E2E65FE18D174845A8DA6171B372\FLUTTER_WINDOWS.DLL.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E env FLUTTER_ROOT=D:\Work\flutter_prjcts\flutter_sdk\flutter PROJECT_DIR=D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv FLUTTER_ROOT=D:\Work\flutter_prjcts\flutter_sdk\flutter FLUTTER_EPHEMERAL_DIR=D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\windows\flutter\ephemeral PROJECT_DIR=D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv FLUTTER_TARGET=D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\lib\main.dart DART_DEFINES=RkxVVFRFUl9XRUJfQVVUT19ERVRFQ1Q9dHJ1ZQ==,RkxVVFRFUl9XRUJfQ0FOVkFTS0lUX1VSTD1odHRwczovL3d3dy5nc3RhdGljLmNvbS9mbHV0dGVyLWNhbnZhc2tpdC9jZGJlZGE3ODhhMjkzZmEyOTY2NWRjM2ZhM2Q2ZTYzYmQyMjFjYjBkLw== DART_OBFUSCATION=false TRACK_WIDGET_CREATION=true TREE_SHAKE_ICONS=false PACKAGE_CONFIG=D:\Work\hack_sochi\MMT_CV\mmt_fin2\sochi_hack\FrontEnd\mmt_cv\.dart_tool\package_config.json D:/Work/flutter_prjcts/flutter_sdk/flutter/packages/flutter_tools/bin/tool_backend.bat windows-x64 Debug
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WORK\HACK_SOCHI\MMT_CV\MMT_FIN2\SOCHI_HACK\FRONTEND\MMT_CV\BUILD\WINDOWS\CMAKEFILES\5ADEB5D0CAC935524F289953FE81B5CF\FLUTTER_ASSEMBLE.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\WORK\HACK_SOCHI\MMT_CV\MMT_FIN2\SOCHI_HACK\FRONTEND\MMT_CV\WINDOWS\FLUTTER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/Work/hack_sochi/MMT_CV/mmt_fin2/sochi_hack/FrontEnd/mmt_cv/windows -BD:/Work/hack_sochi/MMT_CV/mmt_fin2/sochi_hack/FrontEnd/mmt_cv/build/windows --check-stamp-file D:/Work/hack_sochi/MMT_CV/mmt_fin2/sochi_hack/FrontEnd/mmt_cv/build/windows/flutter/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

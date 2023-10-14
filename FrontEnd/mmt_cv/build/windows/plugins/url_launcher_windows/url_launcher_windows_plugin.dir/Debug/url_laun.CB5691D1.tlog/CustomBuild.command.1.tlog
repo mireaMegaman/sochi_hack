@@ -1,0 +1,10 @@
+^D:\WORK\HACK_SOCHI\MMT_CV\MMT_FIN2\SOCHI_HACK\FRONTEND\MMT_CV\WINDOWS\FLUTTER\EPHEMERAL\.PLUGIN_SYMLINKS\URL_LAUNCHER_WINDOWS\WINDOWS\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/Work/hack_sochi/MMT_CV/mmt_fin2/sochi_hack/FrontEnd/mmt_cv/windows -BD:/Work/hack_sochi/MMT_CV/mmt_fin2/sochi_hack/FrontEnd/mmt_cv/build/windows --check-stamp-file D:/Work/hack_sochi/MMT_CV/mmt_fin2/sochi_hack/FrontEnd/mmt_cv/build/windows/plugins/url_launcher_windows/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
