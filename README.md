@@ -53,7 +53,8 @@
 
 https://github.com/mireaMegaman/sochi_hack/blob/main/FrontEnd/mmt_cv/build/windows/runner/Debug/mmt_cv.exe
 
-(На устройстве будет папка ./windows/runner/Debug/mmt_cv.exe)
+На устройстве будет папка 
+```./windows/runner/Debug/mmt_cv.exe```
 
 **Развертка FastApi-сервера:**
 
