@@ -64,6 +64,21 @@ docker run -it --rm -p '5000:5000' georgechufff/hacks_ai_sochi:1.0.*
 ```
 Домен для тестирования модели на сервере FastAPI:
 https://mega-men.ru
+Альтернативный способ запуск FastAPI на локальном хосте:
+В Visual Studio Code (Windows) через терминал:
+```
+python -m venv venv
+venv/Scripts/activate
+```
+```
+cd BackEnd
+pip install -r requirements.txt
+```
+... (после установки зависимостей)
+```
+cd ..
+uvicorn BackEnd.main:app
+```
 
 <p align="right">(<a href="#readme-top"><i>Вернуться наверх</i></a>)</p>
 
