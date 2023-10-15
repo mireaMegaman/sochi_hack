@@ -27,7 +27,13 @@
 
 **За основу решения ML части были выбраны модели:**
 * YoloV8 Medium (Определение номеров вагонов);
+  ![изображение](https://github.com/mireaMegaman/sochi_hack/assets/100156578/3241bf78-7805-4143-91bd-acee0558dbb7)
 * TrOCR (Оптическое распознавание символов);
+  ![изображение](https://github.com/mireaMegaman/sochi_hack/assets/100156578/8a1afc05-acd7-4a70-af1e-d99d86961c7a)
+
+**Общая схема решения**
+![изображение](https://github.com/mireaMegaman/sochi_hack/assets/100156578/4e11a7c4-3417-4b7f-b4e5-3048784f3259)
+
 
 **Для демонстрационного приложения были выбраны Flutter в связке с FastAPI.**
 
