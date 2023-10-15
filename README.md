@@ -32,7 +32,7 @@
   ![изображение](https://github.com/mireaMegaman/sochi_hack/assets/100156578/8a1afc05-acd7-4a70-af1e-d99d86961c7a)
 
 **Общая схема решения**
-![изображение](https://github.com/mireaMegaman/sochi_hack/assets/100156578/4e11a7c4-3417-4b7f-b4e5-3048784f3259)
+![изображение](https://github.com/mireaMegaman/sochi_hack/assets/100156578/227f7ec8-841a-4a34-a21a-a3e3a53401cb)
 
 
 **Для демонстрационного приложения были выбраны Flutter в связке с FastAPI.**
